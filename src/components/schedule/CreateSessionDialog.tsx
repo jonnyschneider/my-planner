@@ -7,6 +7,7 @@ import { useSessionTypes } from '@/hooks/useSessionTypes'
 import { supabase } from '@/lib/supabase'
 import { Clock } from 'lucide-react'
 
+
 interface CreateSessionProps {
   date: Date
   startTime: string
@@ -66,7 +67,15 @@ export function CreateSessionDialog({
             </label>
             <select
               value={selectedType}
-              onChange={(e) => setSelectedType(e.target.value)}
+              onChange={(e) => {
+                const typeId = e.target.value;
+                setSelectedType(typeId);
+                // Set default duration based on selected session type
+                const selectedSessionType = sessionTypes.find(type => type.id === typeId);
+                if (selectedSessionType) {
+                  setDuration(selectedSessionType.default_duration);
+                }
+              }}
               className="w-full border rounded-md p-2"
               required
             >
