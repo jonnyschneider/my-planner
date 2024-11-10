@@ -1,4 +1,7 @@
-import { useEffect, useState } from 'react'
+// src/hooks/useSessionTypes.ts
+'use client'
+
+import { useEffect, useState, useCallback } from 'react'
 import { supabase } from '@/lib/supabase'
 import type { Database } from '@/types/supabase'
 
@@ -9,25 +12,33 @@ export function useSessionTypes() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
-  useEffect(() => {
-    async function fetchSessionTypes() {
-      try {
-        const { data, error } = await supabase
-          .from('session_types')
-          .select('*')
-          .order('priority')
+  const fetchSessionTypes = useCallback(async () => {
+    try {
+      setLoading(true)
+      setError(null)
+      const { data, error } = await supabase
+        .from('session_types')
+        .select('*')
+        .order('name')
 
-        if (error) throw error
-        setSessionTypes(data)
-      } catch (e) {
-        setError(e instanceof Error ? e.message : 'An error occurred')
-      } finally {
-        setLoading(false)
-      }
+      if (error) throw error
+      setSessionTypes(data || [])
+    } catch (e) {
+      setError(e instanceof Error ? e.message : 'An error occurred')
+      setSessionTypes([])
+    } finally {
+      setLoading(false)
     }
-
-    fetchSessionTypes()
   }, [])
 
-  return { sessionTypes, loading, error }
+  useEffect(() => {
+    fetchSessionTypes()
+  }, [fetchSessionTypes])
+
+  return { 
+    sessionTypes, 
+    loading, 
+    error, 
+    refetch: fetchSessionTypes 
+  }
 }

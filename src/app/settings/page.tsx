@@ -3,8 +3,8 @@ import { SessionTypeManager } from '@/components/settings/SessionTypeManager'
 
 export default function Settings() {
   return (
-    <div className="space-y-6">
-      <header>
+    <div className="container mx-auto px-4 py-8">
+      <header className="mb-8">
         <h1 className="text-2xl font-bold">Settings</h1>
       </header>
 
